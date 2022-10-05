@@ -55,6 +55,25 @@ enum IndicatorState {
 
 class IndicatorController extends ChangeNotifier {
   double _value;
+  
+  // 출처: https://velog.io/@tykan/Flutter-notifyListeners-안전하게-사용하기-ChangeNotifier-was-used-after-being-disposed
+  //  mounted 처럼 사용할 bool 변수 선언
+  bool _disposed = false;
+
+  // dispose 할 때 _disposed -> true
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+
+  // _disposed == false 일 때만, super.notifyListeners() 호출!
+  @override
+  notifyListeners() {
+    if (!_disposed) {
+      super.notifyListeners();
+    }
+  }
 
   /// Current indicator value / progress
   double get value => _value;
